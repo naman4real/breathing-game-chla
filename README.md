@@ -1,4 +1,4 @@
-# Welcome to breath-game-chla
+# Welcome to Breathing Game CHLA
 
 A virtual reality project helps doctors in Children's Hospital Los Angeles (CHLA) develop innovative therapies and clinical research for cystic fibrosis.
 
