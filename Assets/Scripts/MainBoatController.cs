@@ -6,16 +6,21 @@ public class MainBoatController : MonoBehaviour
 {
     private float speed = 20f;
     private float speedMultiplier = 2.5f;
-    private float appearTime = 1000f;
     private bool breathIsOn = false;
     private bool collision = false;
-    public Renderer gameBoat;
-    public float blinkInterval = 1f;
-    public float blinkStartDelay = 0.0f;
+    private Renderer gameBoat;
     private Rigidbody playerBody;
+    // Create GameObject to find OSC
+    private GameObject OSC;
+    // Hold OSC data in spirometer object
+    private OSC spirometer;
+
     // Start is called before the first frame update
     void Start()
     {
+        OSC = findGameObject("OSC");
+        spirometer = OSC.GetComponent<OSC>();
+        spirometer.SetAddressHandler("/m5Analog", ReceiveSpirometerData);
         playerBody = GetComponent<Rigidbody>();
         gameBoat = GetComponent<Renderer>();
         gameBoat.enabled = true;
@@ -33,6 +38,11 @@ public class MainBoatController : MonoBehaviour
         {
             breathIsOn = false;
         }
+    }
+
+    private GameObject findGameObject(string name)
+    {
+        return GameObject.Find(name);
     }
 
     // Place general movement in FixedUpdate to avoid shaking.
@@ -55,7 +65,12 @@ public class MainBoatController : MonoBehaviour
         Destroy(other.gameObject);
         collision = true;
         // If the boat collides with an object, blink on and off. 
-        StartCoroutine(BlinkTime(2.5f));
+        StartCoroutine(BlinkTime(2f));
+    }
+
+    private void ReceiveSpirometerData(OscMessage message)
+    {
+        float breathVal = message.GetFloat(0);
     }
 
     // Blink the boat on and off.

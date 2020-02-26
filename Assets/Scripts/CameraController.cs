@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     public GameObject player;
-    private Vector3 offset = new Vector3(13.69f, 19.96f, -0.32f);
+    private Vector3 offset = new Vector3(-.41f, 20.2f, -14.68f);
     void Start()
     {
 
