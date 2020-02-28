@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MoveObjects : MonoBehaviour
 {
-    private float speed = 15f;
+    private float speed = 20f;
     private float direction = 1f;
     // Start is called before the first frame update
     void Start()
@@ -12,8 +12,8 @@ public class MoveObjects : MonoBehaviour
         
     }
 
-    // Update is called once per frame
-    void Update()
+    // Use FixedUpdate to avoid object shaking.
+    void FixedUpdate()
     {
         if (transform.position.x >= 37.5)
         {
@@ -24,6 +24,5 @@ public class MoveObjects : MonoBehaviour
             direction = 1;
         }
         transform.Translate(new Vector3(direction, 0, 0) * Time.deltaTime * speed);
-        Debug.Log(transform.position.x);
     }
 }
