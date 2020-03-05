@@ -4,104 +4,64 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public bool exhaleIsOn = false;
-    public float exhaleTarget;
-    public bool inhaleIsOn = false;
-    public float inhaleTarget;
-
-    //public AudioClip coin;
-    //public AudioClip crash;
-    //public AudioClip treasure;
-
-    private float exhaleDuration = 0f;
-    private float downTime = 0f;
-    private float exhaleStart = 0f;
-    private bool exhaleIsDone = false;
-
-    private float speed = 20f;
-    private float speedMultiplier = 4f;
-    private float turnSpeed = 100f;
-    private float horizontalInput;
-
-    private GameObject wind;
-    private AudioSource windAudio;
-
-    // Create GameObject to find OSC
-    private GameObject OSC;
-    // Hold OSC data in spirometer object
-    private OSC spirometer;
-
-    // Start is called before the first frame update
+    public GameObject player;
+    private Vector3 offset = new Vector3(-.41f, 20.2f, -23.68f);
     void Start()
     {
-        OSC = GameObject.Find("OSC");
-        spirometer = OSC.GetComponent<OSC>();
-        spirometer.SetAddressHandler("/Spirometer/C", ReceiveSpirometerData);
 
-        wind = GameObject.Find("Wind");
-        windAudio = wind.GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame.
+    // Update is called once per frame
     void Update()
     {
-        // If up arrow is down, turn on exhalation.
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            windAudio.Play();
-            exhaleIsOn = true;
-        }
-        if (Input.GetKeyUp(KeyCode.UpArrow))
-        {
-            windAudio.Stop();
-            exhaleIsOn = false;
-        }
-        // If space bar is down, turn on inhalation.
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            inhaleIsOn = true;
-        }
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            inhaleIsOn = false;
-        }
+        transform.position = player.transform.position + offset;
 
     }
-
-    // Place general movement in FixedUpdate to avoid shaking.
-    private void FixedUpdate()
-    {
-        //Move boat side to side. (FOR MOUSE PLAY)
-        horizontalInput = Input.GetAxis("Horizontal");
-        transform.Rotate(Vector3.up, Time.deltaTime * turnSpeed * horizontalInput);
-
-        // Move the boat forward at constant pace.
-        if (!exhaleIsOn)
-        {
-            exhaleIsDone = false;
-            exhaleStart = Time.time;
-            transform.Translate(new Vector3(Vector3.forward.x, 0, Vector3.forward.z) * Time.deltaTime * speed);
-        }
-        // Accelerate boat.
-        if (exhaleIsOn)
-        {
-            downTime = Time.time;
-            transform.Translate(new Vector3(Vector3.forward.x, 0, Vector3.forward.z) * Time.deltaTime * speed * speedMultiplier);
-            exhaleIsDone = true;
-        }
-
-        // Determine how long the breath was exhaled. PUT THRESHOLD CODE FOR EXHALE HERE--
-        if (exhaleIsDone == true)
-        {
-            exhaleDuration = downTime - exhaleStart;
-        }
-    }
-
-    private void ReceiveSpirometerData(OscMessage message)
-    {
-        float breathVal = message.GetFloat(0);
-    }
-
 }
 
 
+//using System.Collections;
+//using System.Collections.Generic;
+//using UnityEngine;
+
+//public class CameraController : MonoBehaviour
+//{
+//    public GameObject player;
+//    private Vector3 offset; 
+//    private Vector3 offsetYPos = new Vector3(0f, 20.2f, 0f);
+
+//    float distance;
+//    Vector3 playerPrevPos;
+//    Vector3 playerMoveDir;
+
+//    void Start()
+//    {
+//        offset = transform.position - player.transform.position;
+//        distance = offset.magnitude;
+//        playerPrevPos = player.transform.position;
+//    }
+
+//    // Update is called once per frame
+//    void LateUpdate()
+//    {
+//        // Update player move direction at each cycle.
+//        playerMoveDir = player.transform.position - playerPrevPos;
+//        if (playerMoveDir != Vector3.zero)
+//        {
+//            playerMoveDir.Normalize();
+
+//            // Place camera behind player object at all times with offset.
+//            transform.position = player.transform.position + offsetYPos - playerMoveDir * distance;
+
+//            // Point forward vector to point at player object.
+//            transform.LookAt(player.transform.position);
+
+//            // Adjust angle of camera.
+//            transform.rotation *= Quaternion.Euler(-30, 0, 0);
+
+//            // Update previous position to current position at each cycle end.
+//            playerPrevPos = player.transform.position;
+//        }
+
+//    }
+//}
