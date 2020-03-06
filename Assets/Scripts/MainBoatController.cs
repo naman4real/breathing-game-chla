@@ -30,51 +30,31 @@ public class MainBoatController : MonoBehaviour
     private GameObject OSC;
     // Hold OSC data in spirometer object
     private OSC spirometer;
+    // Get the boat as a rigidbody
+    private Rigidbody boatBody;
 
     // Start is called before the first frame update
     void Start()
     {
         OSC = GameObject.Find("OSC");
         spirometer = OSC.GetComponent<OSC>();
-        spirometer.SetAddressHandler("/m5Analog", ReceiveSpirometerData);
+        spirometer.SetAddressHandler("/Spirometer/C", ReceiveSpirometerData);
         gameBoat = GetComponent<Renderer>();
         gameBoat.enabled = true;
+        boatBody = GetComponent<Rigidbody>();
 
         audio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame.
-    void Update()
-    {
-        // If up arrow is down, turn on exhalation.
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            audio.Play();
-            exhaleIsOn = true;
-        }
-        if (Input.GetKeyUp(KeyCode.UpArrow))
-        {
-            audio.Stop();
-            exhaleIsOn = false;
-        }
-        // If space bar is down, turn on inhalation.
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            inhaleIsOn = true;
-        }
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            inhaleIsOn = false;
-        }
-    }
+    void Update(){}
 
     // Place general movement in FixedUpdate to avoid shaking.
     private void FixedUpdate()
     {
         // Move boat side to side. (FOR MOUSE PLAY)
-        //horizontalInput = Input.GetAxis("Horizontal");
-        //transform.Rotate(Vector3.up, Time.deltaTime * turnSpeed * horizontalInput);
-
+        // horizontalInput = Input.GetAxis("Horizontal");
+        // transform.Rotate(Vector3.up, Time.deltaTime * turnSpeed * horizontalInput);
 
         // Change boat direction based on camera in VR.
         transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y + 90, transform.rotation.eulerAngles.z);
@@ -82,26 +62,51 @@ public class MainBoatController : MonoBehaviour
         // Take cross product to ensure that boat goes forward.
         Vector3 cameraVector = new Vector3(Camera.main.transform.forward.x, 0, Camera.main.transform.forward.z);
         Vector3 forwardDir = Vector3.Cross(cameraVector, new Vector3(0, 1, 0));
+        Vector3 stationary = new Vector3(0, 0, 0);
 
-        // Move the boat forward at constant pace.
-        if (!exhaleIsOn)
-        {
-            exhaleIsDone = false;
-            exhaleStart = Time.time;
-            transform.Translate(new Vector3(forwardDir.x, 0, forwardDir.z) * Time.deltaTime * speed);
-        }
-        // Accelerate boat.
+        // Accelerate boat when player is exhaling.
         if (exhaleIsOn)
         {
             downTime = Time.time;
-            transform.Translate(new Vector3(forwardDir.x, 0, forwardDir.z) * Time.deltaTime * speed * speedMultiplier);
+            boatBody.AddRelativeForce(new Vector3(forwardDir.x, 0, forwardDir.z), ForceMode.VelocityChange);
+            // boatBody.AddForce(new Vector3(forwardDir.x, 0, forwardDir.z), ForceMode.Impulse);
+            // transform.Translate(new Vector3(forwardDir.x, 0, forwardDir.z) * Time.deltaTime * speed * speedMultiplier);
             exhaleIsDone = true;
+        }
+
+        if (!exhaleIsOn && !inhaleIsOn) 
+        {
+            var oppositeDir = -boatBody.velocity;
+            boatBody.AddForce(oppositeDir);
         }
 
         // Determine how long the breath was exhaled. PUT THRESHOLD CODE FOR EXHALE HERE--
         if (exhaleIsDone == true)
         {
             exhaleDuration = downTime - exhaleStart;
+        }
+    }
+
+    private void ReceiveSpirometerData(OscMessage message)
+    {
+        float breathVal = message.GetFloat(0);
+
+        if (breathVal >= 1400)
+        {
+            audio.Play();
+            exhaleIsOn = true;
+        }
+
+        if (breathVal < 1400 && breathVal > 1100 )
+        {
+            audio.Stop();
+            exhaleIsOn = false;
+            inhaleIsOn = false;
+        }
+
+        if (breathVal <= 1100)
+        {
+            inhaleIsOn = true;
         }
     }
 
@@ -136,13 +141,7 @@ public class MainBoatController : MonoBehaviour
                 audio.PlayOneShot(crash, 5f);
                 StartCoroutine(BlinkTime(2f));
             }
-
         }
-    }
-
-    private void ReceiveSpirometerData(OscMessage message)
-    {
-        float breathVal = message.GetFloat(0);
     }
 
     // Blink the boat on and off.
