@@ -91,20 +91,20 @@ public class MainBoatController : MonoBehaviour
     {
         float breathVal = message.GetFloat(0);
 
-        if (breathVal >= 1400)
+        if (breathVal >= 1500)
         {
             audio.Play();
             exhaleIsOn = true;
         }
 
-        if (breathVal < 1400 && breathVal > 1100 )
+        if (breathVal < 1500 && breathVal > 900 )
         {
             audio.Stop();
             exhaleIsOn = false;
             inhaleIsOn = false;
         }
 
-        if (breathVal <= 1100)
+        if (breathVal <= 900)
         {
             inhaleIsOn = true;
         }
