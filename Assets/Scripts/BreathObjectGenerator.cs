@@ -8,84 +8,65 @@ public class BreathObjectGenerator : MonoBehaviour
     public GameObject remainingCoins;
     public GameObject treasure;
 
-    public int cycles;
-    public int exhaleDuration;
-    public int inhaleDuration;
-    public int cycleWaitTime;
-
-    //private MainBoatController player;
+    private GameObject player;
+    private MainBoatController playerScript;
 
     private int coinCount = 1;
     private float startDelay = 20f;
     private bool firstCoinSpawn = false;
-    private bool inhaleState = true;
-    private bool exhaleState = false;
-    private float initialCoinDistance = 200f;
+    private bool inhaleSpawned = false;
+    private bool exhaleSpawned = false;
+    private float initialCoinDistance = 75f;
     private float initialTreasureDistance = 75f;
 
     // Start is called before the first frame update
     void Start()
     {
-        //player = GameObject.Find("Boat").GetComponent<MainBoatController>();
-
-        // Spawn a new first coin every waitTime seconds.
-        //InvokeRepeating("spawnTreasure", waitTimeState(), cycleWaitTime);
-        //InvokeRepeating("spawnFirstCoin", waitTimeState(), cycleWaitTime);
+        player = GameObject.FindGameObjectWithTag("Boat");
+        playerScript = player.GetComponent<MainBoatController>();
     }
 
 
     // Update is called once per frame
     void Update()
     {
-        if (inhaleState)
+        //SpawnItems();
+        //Debug.Log(firstCoinSpawn);
+        if (playerScript.inhalePhase == true)
         {
-            InhaleCountDown();
-        }
-        if (exhaleState)
-        {
-            ExhaleCountDown();
-        }
-
-        // Spawn the remaining coins based on the exhale duration.
-        if(firstCoinSpawn)
-        {
-            SpawnRemainingCoins();
-            // Reset the coin flags.
-            if(coinCount == exhaleDuration)
+            if (!inhaleSpawned)
             {
-                
-                coinCount = 1;
-                exhaleState = false;
-                firstCoinSpawn = false;
-                initialCoinDistance = 200f;
-                inhaleState = true;
+                SpawnTreasure();
             }
         }
-        
-    }
-
-    private IEnumerator InhaleCountDown()
-    {
-        Debug.Log(inhaleState);        
-        yield return new WaitForSeconds(3);
-        SpawnTreasure();
-        inhaleState = false;
-    }
-
-    private IEnumerator ExhaleCountDown()
-    {   
-        yield return new WaitForSeconds(waitExhaleTimeState());
-        SpawnFirstCoin();
-        exhaleState = false;
-    }
-
-    private float waitExhaleTimeState()
-    {
-        //if (player.exhaleIsOn)
+        if (playerScript.exhalePhase)
         {
-            startDelay = 0f;
+            if (!exhaleSpawned)
+            {
+                if (!firstCoinSpawn)
+                {
+                    SpawnFirstCoin();
+                }
+                // Spawn the remaining coins based on the exhale duration.
+                else
+                {
+                    SpawnRemainingCoins();
+                    // Reset the coin flags.
+                    if (coinCount == playerScript.exhaleTargetTime)
+                    {
+                        coinCount = 1;
+                        firstCoinSpawn = false;
+                        initialCoinDistance = 75f; 
+                        exhaleSpawned = true;
+                    }
+                }
+            }
         }
-        return startDelay;
+    }
+
+    private void SpawnItems()
+    {
+       
     }
 
     // Spawn the first coin in front of the boat.
@@ -94,11 +75,11 @@ public class BreathObjectGenerator : MonoBehaviour
         Vector3 playerPosition = transform.position;
         // Need cross product to produce coins in front of boat.
         Vector3 playerForward = Vector3.Cross(transform.forward, new Vector3(0, 1, 0));
-        Quaternion playerRotation = transform.rotation;
+        Quaternion playerRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
         Vector3 spawnPosition = playerPosition + playerForward * initialCoinDistance;
         Instantiate(coinOne, spawnPosition, playerRotation);
         firstCoinSpawn = true;
-        
+        inhaleSpawned = false;
     }
 
     // Spawn exhaleDuration number of coins one after another
@@ -107,8 +88,8 @@ public class BreathObjectGenerator : MonoBehaviour
         Vector3 playerPosition = transform.position;
         // Need cross product to produce coins in front of boat.
         Vector3 playerForward = Vector3.Cross(transform.forward, new Vector3(0, 1, 0));
-        Quaternion playerRotation = transform.rotation;
-        if (coinCount < exhaleDuration)
+        Quaternion playerRotation = Quaternion.Euler(transform.rotation.eulerAngles.x + 90, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+        if (coinCount < playerScript.exhaleTargetTime)
         {
             initialCoinDistance += 50;
             Vector3 spawnPosition = playerPosition + playerForward * initialCoinDistance;
@@ -122,12 +103,10 @@ public class BreathObjectGenerator : MonoBehaviour
         Vector3 playerPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         // Need cross product to produce coins in front of boat.
         Vector3 playerForward = Vector3.Cross(transform.forward, new Vector3(0, 1, 0));
-        Quaternion playerRotation = transform.rotation;
-        Debug.Log(transform.rotation.x);
+        Quaternion playerRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
         Vector3 spawnPosition = playerPosition + playerForward * initialTreasureDistance;
         Instantiate(treasure, spawnPosition, playerRotation);
-        Debug.Log("yes");
-        inhaleState = false;
-        exhaleState = true;
+        inhaleSpawned = true;
+        exhaleSpawned = false;
     }
 }

@@ -1,11 +1,18 @@
 ﻿<Properties StartupConfiguration="{5378990D-5086-BB92-295C-9E0EE88BEC6D}|">
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/BreathObjectGenerator.cs">
+    <Files>
+      <File FileName="Assets/Scripts/MainBoatController.cs" Line="31" Column="1" />
+      <File FileName="Assets/Scripts/GenerateMap.cs" Line="27" Column="55" />
+      <File FileName="Assets/Scripts/BreathObjectGenerator.cs" Line="64" Column="10" />
+    </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="breathing-game-chla" expanded="True">
-            <Node name="Assets" expanded="True" selected="True">
-              <Node name="Scripts" expanded="True" />
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="BreathObjectGenerator.cs" selected="True" />
+              </Node>
             </Node>
           </Node>
         </State>
@@ -19,7 +26,7 @@
     <String>Oculus.VR.Scripts.Editor.csproj</String>
   </DisabledProjects>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="d2102318-7df8-4a32-b898-3927eb33c711" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="4bfaa4f4-aa90-4e74-a5df-af68a4a3e6c9" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
