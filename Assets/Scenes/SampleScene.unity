@@ -710,7 +710,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinOne: {fileID: 665085585116290574, guid: 555b25360c8bf4b06ae373bdf58628a9, type: 3}
-  remainingCoins: {fileID: 665085585116290574, guid: 555b25360c8bf4b06ae373bdf58628a9,
+  remainingCoins: {fileID: 7183193875962647603, guid: 857a6bfb93a1b476b92337ac9c645a66,
     type: 3}
   treasure: {fileID: 6424089983100042741, guid: 5ffb553115a85484e8234836b736566f,
     type: 3}
@@ -995,7 +995,7 @@ PrefabInstance:
         type: 3}
       propertyPath: treasure
       value: 
-      objectReference: {fileID: 8300000, guid: c1604d2112a694936bb388afe36db635, type: 3}
+      objectReference: {fileID: 8300000, guid: a45339362ec64294fabf7e4d24c408d1, type: 3}
     - target: {fileID: 3038918240233370981, guid: 87bab1f60d76344babbbc1cf42b742bc,
         type: 3}
       propertyPath: player
@@ -1014,12 +1014,12 @@ PrefabInstance:
     - target: {fileID: 3038918240233370981, guid: 87bab1f60d76344babbbc1cf42b742bc,
         type: 3}
       propertyPath: exhaleTargetTime
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3038918240233370981, guid: 87bab1f60d76344babbbc1cf42b742bc,
         type: 3}
       propertyPath: inhaleTargetTime
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3038918240233403329, guid: 87bab1f60d76344babbbc1cf42b742bc,
         type: 3}

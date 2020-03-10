@@ -25,14 +25,11 @@ public class MainBoatController : MonoBehaviour
     public bool exhaleIsOn = true;
     public bool inhaleIsOn = false;
 
-    private float exhaleThresh = 1430f;
-    private float inhaleTresh = 1100f;
+    private float exhaleThresh = 1480f;
+    private float inhaleTresh = 1300f;
     private float steadyThresh = 1340f;
 
-    private bool exhaleOverSteady = false;
-    private bool inhaleUnderSteady = false;
-
-    private float speedMultiplier = 0.1f;
+    private float speedMultiplier = 0.175f;
     //private float speed = 10f;
 
     private AudioSource audio;
@@ -133,12 +130,6 @@ public class MainBoatController : MonoBehaviour
             audio.Play();
             exhaleIsOn = true;
             inhaleIsOn = false;
-            // Maintain exhale time until there is no more breath. Since breathVal will naturally converge
-            // to steadThresh, we are checking that it hasn't reached steadyTresh
-            if (breathVal >= steadyThresh)
-            {
-                exhaleOverSteady = true;
-            }
         }
 
         if (breathVal < exhaleThresh && breathVal > inhaleTresh )
@@ -146,20 +137,12 @@ public class MainBoatController : MonoBehaviour
             audio.Stop();
             exhaleIsOn = false;
             inhaleIsOn = false;
-            //exhaleOverSteady = false;
-            //inhaleUnderSteady = true;
         }
 
         if (breathVal <= inhaleTresh)
         {
             inhaleIsOn = true;
             exhaleIsOn = false;
-            // Maintain inhale time until there is no more breath. Since breathVal will naturally converge
-            // to steadThresh, we are checking that it hasn't reached steadyTresh
-            //if (breathVal < steadyThresh)
-            //{
-            //    inhaleUnderSteady = true;
-            //}
         }
     }
 
@@ -167,23 +150,17 @@ public class MainBoatController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // If it collides with a coin.
-        if (other.gameObject.CompareTag("Coin"))
+        if (other.gameObject.CompareTag("Coin") || other.gameObject.CompareTag("Coin Two"))
         {
-            if (exhaleIsOn)
-            {
-                Destroy(other.gameObject);
-                audio.PlayOneShot(coin, 5f);
-            }
+            Destroy(other.gameObject);
+            audio.PlayOneShot(coin, 5f);
         }
         // If it collides with a treasure chest.
         else if (other.gameObject.CompareTag("Treasure"))
         {
-            if (inhaleIsOn)
-            {
-                audio.PlayOneShot(treasure, 1f);
-                Destroy(other.gameObject);
-                Destroy(GameObject.Find("Sparkle"));
-            }
+            audio.PlayOneShot(treasure, 3f);
+            Destroy(other.gameObject);
+            Destroy(GameObject.FindGameObjectWithTag("Sparkle"));
         }
         else if(other.gameObject.CompareTag("Cliff"))
         {
