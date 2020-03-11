@@ -11,6 +11,9 @@ TagManager:
   - Boat
   - Cliff
   - Coin Two
+  - Treasure Score
+  - Coin Score
+  - Final Score
   layers:
   - Default
   - TransparentFX

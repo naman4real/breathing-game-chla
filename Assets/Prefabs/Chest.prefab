@@ -119,7 +119,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6424089983100042741}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -11.58, y: 0, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children:
@@ -128,7 +128,7 @@ Transform:
   - {fileID: 6424089983832262190}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!65 &5312329634680053478
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -276,7 +276,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 107166, guid: 847bc0ce7577e6a4992fb57041d6294b, type: 3}
       propertyPath: m_TagString
-      value: Sparkle
+      value: Treasure
+      objectReference: {fileID: 0}
+    - target: {fileID: 153270, guid: 847bc0ce7577e6a4992fb57041d6294b, type: 3}
+      propertyPath: m_TagString
+      value: Treasure
       objectReference: {fileID: 0}
     - target: {fileID: 494014, guid: 847bc0ce7577e6a4992fb57041d6294b, type: 3}
       propertyPath: m_LocalPosition.x

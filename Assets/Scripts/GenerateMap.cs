@@ -25,7 +25,7 @@ public class GenerateMap : MonoBehaviour
     private int planeSize = 187;
 
     // Number of additional tiles on the Z and X axes.
-    private int halfTilesZ = 3;
+    private int halfTilesZ = 2;
 
     Vector3 startPos;
 

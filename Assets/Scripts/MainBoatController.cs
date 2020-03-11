@@ -6,11 +6,13 @@ public class MainBoatController : MonoBehaviour
 {
     public bool exhalePhase = false;
     public bool inhalePhase = true;
-    public float exhaleTargetTime;
-    public float inhaleTargetTime;
-    public float exhaleDuration = 0f;
-    public float inhaleDuration = 0f;
-    public float cycles;
+    public float exhaleTargetTime = 1f;
+    public float inhaleTargetTime = 1f;
+    public float exhaleDuration;
+    public float inhaleDuration;
+    public float cycles = 5f;
+    public float cycleCounter = 0f;
+    public bool gameOver = false;
 
     public AudioClip coin;
     public AudioClip crash;
@@ -22,7 +24,7 @@ public class MainBoatController : MonoBehaviour
     private float inhaleStart = 0f;
     //private bool exhaleIsDone = false;
     //private bool inhaleIsDone = false;
-    public bool exhaleIsOn = true;
+    public bool exhaleIsOn = false;
     public bool inhaleIsOn = false;
 
     private float exhaleThresh = 1480f;
@@ -42,6 +44,9 @@ public class MainBoatController : MonoBehaviour
     // Get the boat as a rigidbody
     private Rigidbody boatBody;
 
+    private ScoreBoard treasureScores;
+    private ScoreBoard coinScores;
+    private ScoreBoard finalScores;
     // Start is called before the first frame update
     void Start()
     {
@@ -55,69 +60,98 @@ public class MainBoatController : MonoBehaviour
 
         boatBody = GetComponent<Rigidbody>();
         audio = GetComponent<AudioSource>();
+
+        treasureScores = GameObject.FindGameObjectWithTag("Treasure Score").GetComponent<ScoreBoard>();
+        coinScores = GameObject.FindGameObjectWithTag("Coin Score").GetComponent<ScoreBoard>();
+        finalScores = GameObject.FindGameObjectWithTag("Final Score").GetComponent<ScoreBoard>();
+
+        // Manually set inhale phase to true at start of game.
+        inhalePhase = true;
     }
 
     // Update is called once per frame.
-    void Update(){}
-
-    // Place general movement in FixedUpdate to avoid shaking.
-    private void FixedUpdate()
+    void Update()
     {
-        // Change boat direction based on camera in VR.
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y + 90, transform.rotation.eulerAngles.z);
-
-        // Take cross product to ensure that boat goes forward.
-        Vector3 cameraVector = new Vector3(Camera.main.transform.forward.x, 0, Camera.main.transform.forward.z);
-        Vector3 forwardDir = Vector3.Cross(cameraVector, new Vector3(0, 1, 0));
-        Vector3 stationary = new Vector3(0, 0, 0);
-
-        // Accelerate boat when player is exhaling.
         if (exhaleIsOn && exhalePhase)
         {
             if (cameraBounds())
             {
-                inhaleDuration = 0;
-                downTime = Time.time;
-                boatBody.AddRelativeForce(new Vector3(forwardDir.x, 0, forwardDir.z) * speedMultiplier, ForceMode.VelocityChange);
-                //transform.Translate(new Vector3(forwardDir.x, 0, forwardDir.z) * Time.deltaTime * speed);
-                //boatBody.AddForce(new Vector3(forwardDir.x, 0, forwardDir.z), ForceMode.Impulse);
-                exhaleDuration = downTime - exhaleStart;
+                audio.Play();
             }
         }
-
-        if (inhaleIsOn && inhalePhase)
-        {
-            if (cameraBounds())
-            {
-                exhaleDuration = 0;
-                upTime = Time.time;
-                inhaleDuration = upTime - inhaleStart;
-            }
-        }
-
         if (!exhaleIsOn && !inhaleIsOn)
         {
-            exhaleStart = Time.time;
-            inhaleStart = Time.time;
-            var oppositeDir = -boatBody.velocity;
-            boatBody.AddForce(oppositeDir);
-            if (inhalePhase)
+            audio.Stop();
+        }
+    }
+
+    // Place general movement in FixedUpdate to avoid shaking.
+    private void FixedUpdate()
+    {
+        if(cycleCounter > cycles)
+        {
+            gameOver = true;
+            Destroy(GameObject.FindGameObjectWithTag("Treasure"));
+        }
+        if (!gameOver)
+        {
+            // Change boat direction based on camera in VR.
+            transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y + 90, transform.rotation.eulerAngles.z);
+
+            // Take cross product to ensure that boat goes forward.
+            Vector3 cameraVector = new Vector3(Camera.main.transform.forward.x, 0, Camera.main.transform.forward.z);
+            Vector3 forwardDir = Vector3.Cross(cameraVector, new Vector3(0, 1, 0));
+            Vector3 stationary = new Vector3(0, 0, 0);
+
+            // Accelerate boat when player is exhaling.
+            if (exhaleIsOn && exhalePhase)
             {
-                if (inhaleDuration > 1)
+                if (cameraBounds())
                 {
-                    inhalePhase = false;
-                    exhalePhase = true;
+                    inhaleDuration = 0;
+                    downTime = Time.time;
+                    audio.Play();
+                    boatBody.AddRelativeForce(new Vector3(forwardDir.x, 0, forwardDir.z) * speedMultiplier, ForceMode.VelocityChange);
+                    //transform.Translate(new Vector3(forwardDir.x, 0, forwardDir.z) * Time.deltaTime * speed);
+                    //boatBody.AddForce(new Vector3(forwardDir.x, 0, forwardDir.z), ForceMode.Impulse);
+                    exhaleDuration = downTime - exhaleStart;
                 }
             }
-            if(exhalePhase)
+
+            if (inhaleIsOn && inhalePhase)
             {
-                if (exhaleDuration > 1)
+                if (cameraBounds())
                 {
-                    inhalePhase = true;
-                    exhalePhase = false;
+                    exhaleDuration = 0;
+                    upTime = Time.time;
+                    inhaleDuration = upTime - inhaleStart;
                 }
             }
-            
+
+            if (!exhaleIsOn && !inhaleIsOn)
+            {
+                exhaleStart = Time.time;
+                inhaleStart = Time.time;
+                var oppositeDir = -boatBody.velocity;
+                boatBody.AddForce(oppositeDir);
+                if (inhalePhase)
+                {
+                    if (inhaleDuration > 1)
+                    {
+                        inhalePhase = false;
+                        exhalePhase = true;
+                    }
+                }
+                if (exhalePhase)
+                {
+                    if (exhaleDuration > 1)
+                    {
+                        inhalePhase = true;
+                        exhalePhase = false;
+                    }
+                }
+
+            }
         }
     }
 
@@ -127,14 +161,12 @@ public class MainBoatController : MonoBehaviour
         Debug.Log(breathVal);
         if (breathVal >= exhaleThresh)
         {
-            audio.Play();
             exhaleIsOn = true;
             inhaleIsOn = false;
         }
 
-        if (breathVal < exhaleThresh && breathVal > inhaleTresh )
+        if (breathVal < exhaleThresh && breathVal > inhaleTresh)
         {
-            audio.Stop();
             exhaleIsOn = false;
             inhaleIsOn = false;
         }
@@ -152,22 +184,41 @@ public class MainBoatController : MonoBehaviour
         // If it collides with a coin.
         if (other.gameObject.CompareTag("Coin") || other.gameObject.CompareTag("Coin Two"))
         {
-            Destroy(other.gameObject);
-            audio.PlayOneShot(coin, 5f);
+            if (exhalePhase)
+            {
+                Destroy(other.gameObject);
+                audio.PlayOneShot(coin, 5f);
+                // Update all instances of coinScore so there is data consistency
+                coinScores.coinScore += 1;
+                treasureScores.coinScore += 1;
+                finalScores.coinScore += 1;
+            }
         }
         // If it collides with a treasure chest.
         else if (other.gameObject.CompareTag("Treasure"))
         {
-            audio.PlayOneShot(treasure, 3f);
-            Destroy(other.gameObject);
-            Destroy(GameObject.FindGameObjectWithTag("Sparkle"));
+            if (inhalePhase)
+            {
+                audio.PlayOneShot(treasure, 3f);
+                // Update all instances of treasureScore so there is data consistency
+                coinScores.treasureScore += 1;
+                treasureScores.treasureScore += 1;
+                finalScores.treasureScore += 1;
+                Destroy(other.gameObject);
+            }
         }
         else if(other.gameObject.CompareTag("Cliff"))
         {
             audio.PlayOneShot(crash, 5f);
             StartCoroutine(BlinkTime(2f));
-            Vector3 previousPos = transform.position;
-            transform.Translate(previousPos);
+            if (transform.position.x >= 44)
+            {
+                transform.Translate(new Vector3(42, transform.position.y, transform.position.z));
+            }
+            if (transform.position.x <= -44)
+            {
+                transform.Translate(new Vector3(-42, transform.position.y, transform.position.z));
+            }
         }
         // If it collides with any other object.
         else
@@ -196,7 +247,7 @@ public class MainBoatController : MonoBehaviour
     // Only allow player to accelerate when looking in the forward direction.
     private bool cameraBounds()
     {
-        if(Camera.main.transform.rotation.eulerAngles.y <= 45 && Camera.main.transform.rotation.eulerAngles.y >= -45)
+        if(Camera.main.transform.rotation.eulerAngles.y <= 90 && Camera.main.transform.rotation.eulerAngles.y >= -90)
         {
             return true;
         }
