@@ -2,9 +2,9 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/ScoreBoard.cs">
     <Files>
       <File FileName="Assets/Scripts/MainBoatController.cs" Line="207" Column="43" />
-      <File FileName="Assets/Scripts/ScoreBoard.cs" Line="96" Column="10" />
-      <File FileName="Assets/Scripts/GenerateMap.cs" Line="28" Column="31" />
-      <File FileName="Assets/Scripts/BreathObjectGenerator.cs" Line="35" Column="1" />
+      <File FileName="Assets/Scripts/ScoreBoard.cs" Line="101" Column="6" />
+      <File FileName="Assets/Scripts/GenerateMap.cs" />
+      <File FileName="Assets/Scripts/BreathObjectGenerator.cs" />
       <File FileName="Assets/Scripts/TreasureController.cs" />
     </Files>
     <Pads>
@@ -28,7 +28,7 @@
     <String>Oculus.VR.Scripts.Editor.csproj</String>
   </DisabledProjects>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="9e9c846e-2fed-4abe-9a6d-06611006e824" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="0ad5ad32-3bba-4d4a-86bb-15163d7e3454" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

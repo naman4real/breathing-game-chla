@@ -13,6 +13,7 @@ public class MainBoatController : MonoBehaviour
     public float cycles = 5f;
     public float cycleCounter = 0f;
     public bool gameOver = false;
+    public float speed;
 
     public AudioClip coin;
     public AudioClip crash;
@@ -27,8 +28,8 @@ public class MainBoatController : MonoBehaviour
     public bool exhaleIsOn = false;
     public bool inhaleIsOn = false;
 
-    private float exhaleThresh = 1480f;
-    private float inhaleTresh = 1300f;
+    private float exhaleThresh = 1500f;
+    private float inhaleTresh = 1100f;
     private float steadyThresh = 1340f;
 
     private float speedMultiplier = 0.175f;
@@ -47,6 +48,7 @@ public class MainBoatController : MonoBehaviour
     private ScoreBoard treasureScores;
     private ScoreBoard coinScores;
     private ScoreBoard finalScores;
+    private ScoreBoard spedometer; 
     // Start is called before the first frame update
     void Start()
     {
@@ -64,9 +66,10 @@ public class MainBoatController : MonoBehaviour
         treasureScores = GameObject.FindGameObjectWithTag("Treasure Score").GetComponent<ScoreBoard>();
         coinScores = GameObject.FindGameObjectWithTag("Coin Score").GetComponent<ScoreBoard>();
         finalScores = GameObject.FindGameObjectWithTag("Final Score").GetComponent<ScoreBoard>();
+        spedometer = GameObject.FindGameObjectWithTag("Final Score").GetComponent<ScoreBoard>();
 
-        // Manually set inhale phase to true at start of game.
-        inhalePhase = true;
+    // Manually set inhale phase to true at start of game.
+    inhalePhase = true;
     }
 
     // Update is called once per frame.
@@ -158,6 +161,7 @@ public class MainBoatController : MonoBehaviour
     private void ReceiveSpirometerData(OscMessage message)
     {
         float breathVal = message.GetFloat(0);
+        speed = breathVal;
         Debug.Log(breathVal);
         if (breathVal >= exhaleThresh)
         {
@@ -192,6 +196,7 @@ public class MainBoatController : MonoBehaviour
                 coinScores.coinScore += 1;
                 treasureScores.coinScore += 1;
                 finalScores.coinScore += 1;
+                spedometer.coinScore += 1;
             }
         }
         // If it collides with a treasure chest.
@@ -204,6 +209,7 @@ public class MainBoatController : MonoBehaviour
                 coinScores.treasureScore += 1;
                 treasureScores.treasureScore += 1;
                 finalScores.treasureScore += 1;
+                spedometer.treasureScore += 1;
                 Destroy(other.gameObject);
             }
         }
